@@ -1,10 +1,11 @@
 import arcade
-from physics_demo.player import Player
+from physics_demo.player import Player, Wall
 from physics_demo.core import PhysicsEngine
 from CONSTANTS import (
                     SCREEN_WIDTH,
                     SCREEN_HEIGHT,
-                    SCREEN_TITLE
+                    SCREEN_TITLE,
+                    DEFAULT_SIDE
 )
 
 
@@ -18,6 +19,29 @@ class GameWindow(arcade.Window):
         self.engine = PhysicsEngine()
 
         self.player = Player()
+        self.engine.add(self.player)
+
+        self.walls = []
+
+        # initialize a square of walls
+        for i in range(int(SCREEN_WIDTH/DEFAULT_SIDE)):
+            wall = Wall(y=DEFAULT_SIDE, x=i*DEFAULT_SIDE)
+            self.engine.add(wall)
+            self.walls.append(wall)
+
+            wall = Wall(y=i*DEFAULT_SIDE, x=DEFAULT_SIDE)
+            self.engine.add(wall)
+            self.walls.append(wall)
+
+            wall = Wall(y=SCREEN_HEIGHT-DEFAULT_SIDE,
+                        x=SCREEN_WIDTH - (i*DEFAULT_SIDE))
+            self.engine.add(wall)
+            self.walls.append(wall)
+
+            wall = Wall(y=SCREEN_HEIGHT-(i*DEFAULT_SIDE),
+                        x=SCREEN_WIDTH-DEFAULT_SIDE)
+            self.engine.add(wall)
+            self.walls.append(wall)
 
         self.keys = {
                     "W": False,
@@ -29,6 +53,8 @@ class GameWindow(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         self.player.draw()
+        for wall in self.walls:
+            wall.draw()
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.W:
@@ -39,6 +65,28 @@ class GameWindow(arcade.Window):
             self.keys["A"] = True
         elif key == arcade.key.D:
             self.keys["D"] = True
+        elif key == arcade.key.F:
+            self.set_fullscreen(not self.fullscreen)
+            width, height = self.get_size()
+            if self.fullscreen:
+                if SCREEN_WIDTH > SCREEN_HEIGHT:
+                    aspect_ratio = height/width
+                    x1 = 0
+                    x2 = SCREEN_WIDTH
+                    y1 = 0
+                    y2 = int(SCREEN_WIDTH*aspect_ratio)
+                else:
+                    aspect_ratio = width/height
+                    x1 = 0
+                    x2 = int(SCREEN_HEIGHT*aspect_ratio)
+                    y1 = 0
+                    y2 = SCREEN_HEIGHT
+            else:
+                x1 = 0
+                x2 = SCREEN_WIDTH
+                y1 = 0
+                y2 = SCREEN_HEIGHT
+            self.set_viewport(x1, x2, y1, y2)
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.W:
@@ -51,7 +99,8 @@ class GameWindow(arcade.Window):
             self.keys["D"] = False
 
     def on_update(self, delta_time):
-        self.player.update(self.keys)
+        self.player.update(delta_time, self.keys)
+        self.engine.step(delta_time)
 
 
 def main():

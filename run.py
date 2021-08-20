@@ -63,6 +63,28 @@ class GameWindow(arcade.Window):
             self.keys["A"] = True
         elif key == arcade.key.D:
             self.keys["D"] = True
+        elif key == arcade.key.F:
+            self.set_fullscreen(not self.fullscreen)
+            width, height = self.get_size()
+            if self.fullscreen:
+                if SCREEN_WIDTH > SCREEN_HEIGHT:
+                    aspect_ratio = height/width
+                    x1 = 0
+                    x2 = SCREEN_WIDTH
+                    y1 = 0
+                    y2 = int(SCREEN_WIDTH*aspect_ratio)
+                else:
+                    aspect_ratio = width/height
+                    x1 = 0
+                    x2 = int(SCREEN_HEIGHT*aspect_ratio)
+                    y1 = 0
+                    y2 = SCREEN_HEIGHT
+            else:
+                x1 = 0
+                x2 = SCREEN_WIDTH
+                y1 = 0
+                y2 = SCREEN_HEIGHT
+            self.set_viewport(x1, x2, y1, y2)
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.W:
