@@ -1,6 +1,7 @@
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 480
+SCREEN_HEIGHT = 270
 SCREEN_TITLE = "Dungeons and Directories"
+FRAMERATE = 1/60
 
 PLAYER_SIZE = 10
 PLAYER_MOVE_FORCE = 10
@@ -24,3 +25,10 @@ MATERIALS = {
             }
 
 DEFAULT_MAT = MATERIALS["Stone"]
+
+# layers, used to prevent objects from colliding with one another
+LAYERS = {
+        "PLAYER": 1,
+        "WALLS": 2,
+        "TESTING": 3
+}

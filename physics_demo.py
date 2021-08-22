@@ -1,11 +1,14 @@
 import arcade
-from physics_demo.player import Player, Wall
+import random
+from physics_demo.player import Player, Wall, Circle, Ball
 from physics_demo.core import PhysicsEngine
 from CONSTANTS import (
                     SCREEN_WIDTH,
                     SCREEN_HEIGHT,
                     SCREEN_TITLE,
-                    DEFAULT_SIDE
+                    DEFAULT_SIDE,
+                    FRAMERATE,
+                    LAYERS
 )
 
 
@@ -18,30 +21,36 @@ class GameWindow(arcade.Window):
         """ Set up the game and initialize the variables. """
         self.engine = PhysicsEngine()
 
-        self.player = Player()
-        self.engine.add(self.player)
+        self.player = Player(engine=self.engine, layers=[LAYERS["TESTING"]])
 
         self.walls = []
 
         # initialize a square of walls
         for i in range(int(SCREEN_WIDTH/DEFAULT_SIDE)):
-            wall = Wall(y=DEFAULT_SIDE, x=i*DEFAULT_SIDE)
-            self.engine.add(wall)
+            wall = Wall(y=DEFAULT_SIDE, x=i*DEFAULT_SIDE, engine=self.engine)
             self.walls.append(wall)
 
-            wall = Wall(y=i*DEFAULT_SIDE, x=DEFAULT_SIDE)
-            self.engine.add(wall)
+            wall = Wall(y=i*DEFAULT_SIDE, x=DEFAULT_SIDE, engine=self.engine)
             self.walls.append(wall)
 
             wall = Wall(y=SCREEN_HEIGHT-DEFAULT_SIDE,
-                        x=SCREEN_WIDTH - (i*DEFAULT_SIDE))
-            self.engine.add(wall)
+                        x=SCREEN_WIDTH - (i*DEFAULT_SIDE), engine=self.engine)
             self.walls.append(wall)
 
             wall = Wall(y=SCREEN_HEIGHT-(i*DEFAULT_SIDE),
-                        x=SCREEN_WIDTH-DEFAULT_SIDE)
-            self.engine.add(wall)
+                        x=SCREEN_WIDTH-DEFAULT_SIDE, engine=self.engine)
             self.walls.append(wall)
+
+        self.circle = Circle(
+            x=self.player.x, y=self.player.y-110, engine=self.engine)
+
+        self.balls = []
+
+        ball_num = 3
+        for i in range(ball_num):
+            ball = Ball(x=self.player.x, y=self.player.y
+                        + 30, engine=self.engine)
+            self.balls.append(ball)
 
         self.keys = {
                     "W": False,
@@ -50,11 +59,17 @@ class GameWindow(arcade.Window):
                     "D": False
                     }
 
+        self.set_update_rate(FRAMERATE)
+        self.counter = 0
+
     def on_draw(self):
         arcade.start_render()
+        self.circle.draw()
         self.player.draw()
         for wall in self.walls:
             wall.draw()
+        for ball in self.balls:
+            ball.draw()
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.W:
@@ -101,6 +116,12 @@ class GameWindow(arcade.Window):
     def on_update(self, delta_time):
         self.player.update(delta_time, self.keys)
         self.engine.step(delta_time)
+        self.counter += 1
+        if self.counter >= 60:
+            for ball in self.balls:
+                ball.enact_force(
+                    (random.randint(-10, 10), random.randint(-10, -1)))
+            self.counter = 0
 
 
 def main():

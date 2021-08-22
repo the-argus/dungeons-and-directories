@@ -1,10 +1,13 @@
 import arcade
-from physics_demo.tools import sign, is_type_of
-from physics_demo.collisions import aabb_collide
+import math
+from physics_demo.tools import sign, is_type_of, create_bitmask, bitmask_overlap
+from physics_demo.collisions import simple_collide, complex_collide
 
 from CONSTANTS import (
                         DEFAULT_SIDE, DEFAULT_MAT,
-                        AA_RECT, RECT, CIRCLE, POLYGON
+                        AA_RECT, RECT, CIRCLE, POLYGON,
+                        FRAMERATE,
+                        LAYERS
 )
 
 
@@ -15,6 +18,9 @@ class PhysicsObject():
         # default to a physics object that cant be collided with and can move
         self.has_collisions = kwargs.get('has_collisions', False)
         self.static = kwargs.get('static', False)
+
+        layers = kwargs.get('layers', [])
+        self.layers = create_bitmask(layers)
 
         if not self.static:
             self.fx = kwargs.get('x_force', 0)
@@ -29,6 +35,9 @@ class PhysicsObject():
             'material', DEFAULT_MAT), self.hitbox.get_area())
 
         self.has_engine = False
+
+        if kwargs.get('engine', None) is not None:
+            kwargs.get('engine').add(self)
 
     def enact_force(self, force):
         def local_run():
@@ -154,69 +163,134 @@ class PhysicsEngine():
 
         for object in self.dynamics:
             ax, ay = get_acceleration(object)
-            object.vx += ax
-            object.vy += ay
+            object.vx += ax*delta_time/FRAMERATE
+            object.vy += ay*delta_time/FRAMERATE
             self.move(delta_time, object)
 
     def move(self, delta_time, object):
-        vx = object.vx
-        vy = object.vy
-        x = object.x
-        y = object.y
+        vx = object.vx*(delta_time/FRAMERATE)
+        vy = object.vy*(delta_time/FRAMERATE)
         collided = False
         hit_objects = []
         for body in self.colliders:
-            if bbox_collide(object, body, (vx, vy)):
+            if bitmask_overlap(body.layers, object.layers):
+                continue
+            if simple_collide(object, body, (vx, vy)):
                 collided = True
                 hit_objects.append(body)
         if not collided:
-            object.x += object.vx
-            object.y += object.vy
+            object.x += math.floor(vx)
+            object.y += math.floor(vy)
             return
 
         #narrow phase, if did collide
+        x_collided = False
+        y_collided = False
+        simple = object.hitbox.type == AA_RECT
+        hit_complex = not simple
         x_cache = 0
         collided = False
-        while not collided and abs(x_cache) < abs(object.vx):
-            short_term_collide = False
+
+        while (not collided) and abs(x_cache) < abs(vx):
+            increment = sign(vx)
             for body in hit_objects:
-                collision = bbox_collide(object, body, (x_cache + sign(vx), 0))
+                collision = simple_collide(
+                    object, body, (x_cache + increment, 0))
                 if collision:
-                    short_term_collide = True
+                    collided = True
                     break
-            if not short_term_collide:
-                x_cache += sign(vx)
+            # handle collision
+            if not collided:
+                x_cache += increment
             else:
-                object.vx = 0
+                if not (body.hitbox.type == AA_RECT and simple):
+                    hit_complex = True
+
+                x_collided = True
                 break
 
-        object.x += x_cache
+        object.x = int(object.x) + int(x_cache)
 
         # narrow phase again but y values this time
         y_cache = 0
         collided = False
-        while not collided and abs(y_cache) < abs(object.vy):
-            short_term_collide = False
+        while (not collided) and abs(y_cache) < abs(vy):
+            increment = sign(vy)
             for body in hit_objects:
-                collision = bbox_collide(object, body, (0, y_cache + sign(vy)))
+                collision = simple_collide(
+                    object, body, (0, y_cache + increment))
                 if collision:
-                    short_term_collide = True
+                    collided = True
                     break
-            if not short_term_collide:
-                y_cache += sign(vy)
+            # handle collision
+            if not collided:
+                y_cache += increment
             else:
-                object.vy = 0
+                if not (body.hitbox.type == AA_RECT and simple):
+                    hit_complex = True
+
+                y_collided = True
                 break
 
-        object.y += y_cache
+        object.y = int(object.y) + int(y_cache)
 
-    def is_colliding(object1, object2, displacement=(0, 0)) -> bool:
-        #returns whether object1, if displaced, would collide with object2
-        if not (is_type_of(object1, PhysicsObject) and is_type_of(object1, PhysicsObject)):
-            raise TypeError("Only PhysicObjects can be collision checked")
+        if (not simple) or hit_complex:
+            self.complex_move(delta_time, object,
+                              hit_objects, (x_cache, y_cache))
+        else:
+            if x_collided:
+                object.vx = 0
+            if y_collided:
+                object.vy = 0
+
+    def complex_move(self, delta_time, object, hit_objects, moved):
+        # identical to regular move but can do complex collisions
+
+        x_cache = 0
+        collided = False
+
+        vx = (object.vx-moved[0])*(delta_time/FRAMERATE)
+        vy = (object.vy-moved[1])*(delta_time/FRAMERATE)
+
+        while (not collided) and abs(x_cache) < abs(vx):
+            increment = sign(vx)
+            for body in hit_objects:
+                collision = complex_collide(
+                    object, body, (increment, 0))
+                if collision:
+                    collided = True
+                    object.vx = 0
+                    break
+            # handle collision
+            if not collided:
+                x_cache += increment
+            else:
+                break
+
+        object.x = int(object.x) + int(x_cache)
+
+        # narrow phase again but y values this time
+        y_cache = 0
+        collided = False
+        while (not collided) and abs(y_cache) < abs(vy):
+            increment = sign(vy)
+            for body in hit_objects:
+                collision = complex_collide(
+                    object, body, (0, increment))
+                if collision:
+                    collided = True
+                    object.vy = 0
+                    break
+            # handle collision
+            if not collided:
+                y_cache += increment
+            else:
+                break
+
+        object.y = int(object.y) + int(y_cache)
 
     def add(self, object):
-        if (isinstance(object, PhysicsObject) or issubclass(type(object), PhysicsObject)) and not object.has_engine:
+        if is_type_of(object, PhysicsObject) and not object.has_engine:
             object.has_engine = True
             if object.static:
                 self.statics.append(object)
@@ -225,7 +299,7 @@ class PhysicsEngine():
             if object.has_collisions:
                 self.colliders.append(object)
         else:
-            if not (isinstance(object, PhysicsObject) or issubclass(object, PhysicsObject)):
+            if not is_type_of(object, PhysicsObject):
                 raise TypeError(
                     "Only a physics object can be added to an engine.")
             else:
@@ -246,8 +320,3 @@ class PhysicsEngine():
         if object.has_collisions:
             self.colliders.remove(object)
             object.has_engine = False
-
-
-# some easier use versions of the physics functions in collisions.py
-def bbox_collide(object1, object2, translation):
-    return aabb_collide(object1.hitbox.width, object1.hitbox.height, object1.x + translation[0], object1.y + translation[1], object2.hitbox.width, object2.hitbox.height, object2.x, object2.y)

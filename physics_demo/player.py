@@ -7,15 +7,18 @@ from CONSTANTS import (
                     PLAYER_MOVE_FORCE,
                     SCREEN_WIDTH,
                     SCREEN_HEIGHT,
-                    AA_RECT
+                    AA_RECT,
+                    CIRCLE
 )
 
 
 class Player(PhysicsObject):
     """ Player Class """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__(
+                        engine=kwargs.get('engine'),
+                        layers=kwargs.get('layers'),
                         static=False,
                         x=SCREEN_WIDTH/2,
                         y=SCREEN_HEIGHT/2,
@@ -41,9 +44,11 @@ class Wall(PhysicsObject):
 
     def __init__(self, **kwargs):
         super().__init__(
+                        engine=kwargs.get('engine'),
+                        layers=kwargs.get('layers'),
                         static=True,
-                        x=kwargs.get('x', 0),
-                        y=kwargs.get('y', 0),
+                        x=kwargs.get('x'),
+                        y=kwargs.get('y'),
                         has_collisions=True,
                         hitbox=Hitbox(self, AA_RECT)
         )
@@ -52,3 +57,38 @@ class Wall(PhysicsObject):
     def draw(self):
         arcade.draw_rectangle_filled(
             self.x, self.y, DEFAULT_SIDE, DEFAULT_SIDE, self.color)
+
+
+class Circle(PhysicsObject):
+
+    def __init__(self, **kwargs):
+        super().__init__(
+                        engine=kwargs.get('engine'),
+                        layers=kwargs.get('layers'),
+                        static=True,
+                        x=kwargs.get('x'),
+                        y=kwargs.get('y'),
+                        has_collisions=True,
+                        hitbox=Hitbox(self, CIRCLE, radius=100)
+        )
+
+    def draw(self):
+        arcade.draw_circle_filled(
+            self.x, self.y, self.hitbox.radius, arcade.color.RED)
+
+
+class Ball(PhysicsObject):
+    def __init__(self, **kwargs):
+        super().__init__(
+                        engine=kwargs.get('engine'),
+                        layers=kwargs.get('layers'),
+                        static=False,
+                        x=kwargs.get('x'),
+                        y=kwargs.get('y'),
+                        has_collisions=False,
+                        hitbox=Hitbox(self, CIRCLE, radius=15)
+        )
+
+    def draw(self):
+        arcade.draw_circle_filled(
+            self.x, self.y, self.hitbox.radius, arcade.color.GREEN)
