@@ -1,6 +1,6 @@
 import arcade
 import math
-from .core import PhysicsObject, Hitbox
+from .core import PhysicsObject
 from CONSTANTS import (
                     DEFAULT_SIDE,
                     PLAYER_SIZE,
@@ -22,7 +22,7 @@ class Player(PhysicsObject):
                         static=False,
                         x=SCREEN_WIDTH/2,
                         y=SCREEN_HEIGHT/2,
-                        hitbox=Hitbox(self, AA_RECT)
+                        hitbox_type=AA_RECT
         )
         self.color = arcade.color.YELLOW
 

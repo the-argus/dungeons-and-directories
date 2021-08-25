@@ -4,11 +4,13 @@ SCREEN_TITLE = "Dungeons and Directories"
 FRAMERATE = 1/60
 
 PLAYER_SIZE = 10
-PLAYER_MOVE_FORCE = 10
+PLAYER_MOVE_FORCE = 100
+PLAYER_START = [SCREEN_WIDTH/2, SCREEN_HEIGHT/2]
 
 # physics objects default properties
 DEFAULT_MASS = 5
 DEFAULT_SIDE = 10
+DRAG = 0.3
 
 # hitbox types
 AA_RECT = 1
