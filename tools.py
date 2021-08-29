@@ -1,4 +1,5 @@
 from arcade import Sprite
+import math
 
 # passthrough class
 
@@ -16,6 +17,35 @@ def list_to_str(in_list):
             raise TypeError("Cannot concatenate non string types.")
     return final
 
+
+def compass_atan(opposite, adjacent):
+    """
+    Inverse tangent but it's only accurate to the cardinal directions and diagonals.
+    """
+    if opposite == 0:
+        if adjacent == 0:
+            # this will never return unless both input are 0
+            return 2*math.pi
+        elif adjacent > 0:
+            return 0
+        else:
+            return math.pi
+    elif opposite > 0:
+        if adjacent == 0:
+            return math.pi/2
+        elif adjacent > 0:
+            return math.pi/4
+        else:
+            return 3*math.pi/4
+    else:
+        if adjacent == 0:
+            return 3*math.pi/2
+        elif adjacent > 0:
+            return 7*math.pi/4
+        else:
+            return 5*math.pi/4
+        
+        
 
 def read_kwargs(in_string):
     # takes a string and returns a dict which can be unpacked as kwargs

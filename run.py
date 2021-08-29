@@ -117,8 +117,8 @@ class GameWindow(arcade.Window):
     def on_update(self, delta_time):
         self.player.update(delta_time, self.keys)
 
-        self.eng.physics_engine.apply_universal_force_func(
-            drag_force, in_class=PhysicsObject)
+        #self.eng.physics_engine.apply_universal_force_func(
+        #   drag_force, in_class=PhysicsObject)
 
         self.eng.update_objects(delta_time)
 

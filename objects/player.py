@@ -1,6 +1,6 @@
 import math
 
-from tools import arcade_sprite
+from tools import arcade_sprite, compass_atan
 from engine.physics.object import PhysicsObject
 from CONSTANTS import (
                     SCREEN_WIDTH,
@@ -9,7 +9,7 @@ from CONSTANTS import (
                     PLAYER_MOVE_FORCE
 )
 """
-this custom class exists because of the extra input in the on_update function
+this custom class exists because of the extra arg in the on_update function
 otherwise this would be better to do with engine.create_object
 """
 
@@ -28,16 +28,14 @@ class Player(PhysicsObject, arcade_sprite):
     def update(self, delta_time, keys):
         xin = keys["D"] - keys["A"]
         yin = keys["W"] - keys["S"]
-        """
+
         is_moving = xin != 0 or yin != 0
 
-        if xin != 0:
-            dir = math.atan(yin/xin)
-        else:
-            dir = math.asin(yin)
+        dir = compass_atan(yin, xin)
+
 
         force = (is_moving*PLAYER_MOVE_FORCE*math.cos(dir),
                  is_moving*PLAYER_MOVE_FORCE*math.sin(dir))
-        """
+        
         force = (xin*PLAYER_MOVE_FORCE, yin*PLAYER_MOVE_FORCE)
         self.enact_force(force)
