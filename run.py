@@ -1,8 +1,7 @@
 import arcade
 
 from CONSTANTS import (
-                    SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE,
-                    DEFAULT_SIDE
+                    SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE
 )
 
 

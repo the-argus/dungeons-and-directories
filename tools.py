@@ -1,12 +1,39 @@
-from arcade import Sprite
 import math
+from random import randbytes
+from CONSTANTS import MAX_ID_ITERATIONS
 
-# passthrough class
+def get_unique_id(used : dict) -> str:
+    """Return a unique string given used unique strings."""
+    key = randbytes(4)
+    iters = 0
+    while (used.get(key, True)):
+        key = randbytes(4)
+        iters += 1
+        if iters > MAX_ID_ITERATIONS:
+            raise Exception("Maximum ID generation iterations reached, no ID generated.")
+    return key
 
 
-class arcade_sprite(Sprite):
-    pass
 
+def spritelist_key(spritelist):
+    """Return a string of numbers seeded on spritelist characteristics."""
+    # use the characteristics of the sprite and append the bits together
+    # potential for overlap if spatial hash cell size exceeds 2^8
+    key = spritelist.spatial_hash.cell_size & 0b11111111
+    key = key << 2
+    key = set_bit(key, 1, spritelist.use_spatial_hash())
+    key = set_bit(key, 0, spritelist.is_static)
+    return str(key)
+
+def set_bit(value, bit, on_off):
+    num = value
+    if on_off:
+        # insert bit
+        num |= (1<<bit)
+    else:
+        # set the bit to 0
+        num & ~(1<<bit)
+    return num
 
 def list_to_str(in_list):
     final = ""
@@ -79,37 +106,3 @@ def sign(num):
     else:
         return num/abs(num)
 
-
-def create_bitmask(bits: list) -> int:
-    final = 0
-    if bits is not None:
-        for bit in bits:
-            final += 2**bit
-    return final
-
-
-def bitmask_overlap(mask1: int, mask2: int) -> bool:
-    return (mask1 & mask2) != 0
-    """
-    I didn't know bitwise operators existed, okay?
-    # returns true if mask1 and mask2 both contain an element
-    layer_1 = mask1
-    layer_2 = mask2
-    while layer_1 > 0 and layer_2 > 0:
-        layer_1, has_bit_1 = divmod(layer_1, 2)
-        layer_2, has_bit_2 = divmod(layer_2, 2)
-        if has_bit_1 and has_bit_2:
-            return True
-    return False
-    """
-
-
-# unused
-def get_binary(bitmask: int) -> list:
-    num = bitmask
-    binary = []
-    while num > 0:
-        div, mod = divmod(num, 2)
-        num = div
-        binary.append(mod)
-    return binary[::-1]
