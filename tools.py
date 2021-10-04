@@ -1,4 +1,5 @@
 import math
+import inspect
 from random import randbytes
 from CONSTANTS import MAX_ID_ITERATIONS
 
@@ -13,7 +14,14 @@ def get_unique_id(used : dict) -> str:
             raise Exception("Maximum ID generation iterations reached, no ID generated.")
     return key
 
-
+# stolen from le stack overflow
+def get_default_args(func):
+    signature = inspect.signature(func)
+    return {
+        k: v.default
+        for k, v in signature.parameters.items()
+        if v.default is not inspect.Parameter.empty
+    }
 
 def spritelist_key(spritelist):
     """Return a string of numbers seeded on spritelist characteristics."""

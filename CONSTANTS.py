@@ -9,3 +9,6 @@ PLAYER_START = [SCREEN_WIDTH/2, SCREEN_HEIGHT/2]
 
 # used by tools
 MAX_ID_ITERATIONS = 30
+
+# used by engine.Engine
+LAYERS = 3
