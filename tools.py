@@ -1,18 +1,37 @@
 import math
 import inspect
-from random import randbytes
+from random import randint
 from CONSTANTS import MAX_ID_ITERATIONS
+
+"""
+This file contains a ton of random reusable stuff.
+"""
+class IDDict(dict):
+    """
+    Dictionary that adds itself to an engine's references whenever it's created,
+    and has a default value.
+    """
+    def __init__(self, engine=None, default=None, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        # i could override .get to use this instead of None
+        # but idk overriding native classes is weird, dont
+        # wanna have to debug that rn
+        self.default = default
+        if engine is not None:
+            engine.references.append(self)
+
 
 def get_unique_id(used : dict) -> str:
     """Return a unique string given used unique strings."""
-    key = randbytes(4)
+    #TODO: Make this better. Bad things could happen when the used id dict starts to get full
+    key = randint(0,2000000)
     iters = 0
-    while (used.get(key, True)):
-        key = randbytes(4)
+    while (used.get(key) != None):
+        key = randint(0,2000000)
         iters += 1
         if iters > MAX_ID_ITERATIONS:
             raise Exception("Maximum ID generation iterations reached, no ID generated.")
-    return key
+    return str(key)
 
 # stolen from le stack overflow
 def get_default_args(func):
@@ -24,7 +43,7 @@ def get_default_args(func):
     }
 
 def spritelist_key(spritelist):
-    """Return a string of numbers seeded on spritelist characteristics."""
+    """Return a string of numbers seeded on arcade spritelist characteristics."""
     # use the characteristics of the sprite and append the bits together
     # potential for overlap if spatial hash cell size exceeds 2^8
     key = spritelist.spatial_hash.cell_size & 0b11111111
@@ -79,33 +98,6 @@ def compass_atan(opposite, adjacent):
             return 7*math.pi/4
         else:
             return 5*math.pi/4
-        
-        
-
-def read_kwargs(in_string):
-    # takes a string and returns a dict which can be unpacked as kwargs
-    # items in the dict are strings so they can be eval-ed outside
-    final = {}
-    current_kw = []
-    current_item = []
-    mode = current_kw
-
-    for char in in_string:
-        if char != "," and char != "=":
-            mode.append(char)
-        elif char == "=":
-            mode = current_item
-        elif char == " ":
-            pass
-        else:
-            final[list_to_str(current_kw)] = list_to_str(current_item)
-            current_kw = []
-            current_item = []
-            mode = current_kw
-
-    final[list_to_str(current_kw)] = list_to_str(current_item)
-
-    return final
 
 
 def sign(num):
