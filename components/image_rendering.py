@@ -40,7 +40,7 @@ class BatchHandler():
 
         tex_coords = texture.tex_coords
         """
-        # new code, up to date with what's on pyglet github
+        # new code, up to date with what's on pyglet github (pyglet 2.0-dev9)
         vertex_list = self._batch.add_indexed(
             4, GL_TRIANGLES, group, [0, 1, 2, 0, 2, 3],
             'position2f/%s' % usage,
@@ -55,6 +55,7 @@ class BatchHandler():
                 4, GL_QUADS, group, vertex_format, 'c4B', ('t3f', texture.tex_coords))
 
         self._update_vlist_position(vertex_list=vertex_list, texture=texture)
+        self._update_vlist_color(vertex_list=vertex_list, color=color[0:2], opacity=color[3])
 
         return vertex_list
     
@@ -77,6 +78,10 @@ class BatchHandler():
                     int(vertices[4]), int(vertices[5]),
                     int(vertices[6]), int(vertices[7]))
         vertex_list.vertices[:] = vertices
+    
+    def _update_vlist_color(self, vertex_list, color, opacity):
+        r, g, b = color
+        vertex_list.colors[:] = [r, g, b, int(opacity)] * 4
 
     def add_sprite(self, object, **kwargs):
         """Add sprite information into the draw batch. Overwrites existing sprite info."""
