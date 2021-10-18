@@ -54,12 +54,12 @@ class BatchHandler():
         vertex_list = self._batch.add(
                 4, GL_QUADS, group, vertex_format, 'c4B', ('t3f', texture.tex_coords))
 
-        self._update_vlist_position(vertex_list=vertex_list, texture=texture)
-        self._update_vlist_color(vertex_list=vertex_list, color=color[0:2], opacity=color[3])
+        self._match_position_to_texture(vertex_list=vertex_list, texture=texture)
+        self._update_vlist_color(vertex_list=vertex_list, color=color[:2], opacity=color[3])
 
         return vertex_list
     
-    def _update_vlist_position(self, vertex_list, texture):
+    def _match_position_to_texture(self, vertex_list, texture):
         """
         Adjust vertices of vertex list to be the size of a texture.
         TODO: add support for rotation and scale.
@@ -80,20 +80,19 @@ class BatchHandler():
         vertex_list.vertices[:] = vertices
     
     def _update_vlist_color(self, vertex_list, color, opacity):
-        r, g, b = color
-        vertex_list.colors[:] = [r, g, b, int(opacity)] * 4
+        vertex_list.colors[:] = [*color, int(opacity)] * 4
 
     def add_sprite(self, object, **kwargs):
         """Add sprite information into the draw batch. Overwrites existing sprite info."""
-        objid = object.id
+        identifier = object.id
         try:
-            self._texture[objid] = kwargs["texture"]
+            self._texture[identifier] = kwargs["texture"]
         except KeyError:
             pass
         
-        self._vertex_list[objid] = self._create_vertex_list(object.coords, **kwargs)
+        self._vertex_list[identifier] = self._create_vertex_list(object.coords, **kwargs)
     
-    def _update_vlist_color(self, identifier, color):
+    def _update_object_color(self, identifier, color):
         self._color[identifier] = color
     
     def draw(self):
