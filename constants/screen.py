@@ -1,0 +1,3 @@
+SCREEN_WIDTH = 400
+SCREEN_HEIGHT = 200
+SCREEN_TITLE = "Dungeons and Directories"

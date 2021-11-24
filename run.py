@@ -1,7 +1,9 @@
 import arcade
+import os
 
-from CONSTANTS import (
-                    SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE
+from constants.screen import (  SCREEN_WIDTH,
+                                SCREEN_HEIGHT,
+                                SCREEN_TITLE
 )
 
 
@@ -33,7 +35,10 @@ class GameWindow(arcade.Window):
         elif key == arcade.key.D:
             self.keys["D"] = True
         elif key == arcade.key.F:
+            # toggle fullscreen
             self.set_fullscreen(not self.fullscreen)
+
+            # modify viewport to match fullscreen
             width, height = self.get_size()
             if self.fullscreen:
                 if SCREEN_WIDTH > SCREEN_HEIGHT:
@@ -70,10 +75,16 @@ class GameWindow(arcade.Window):
 
 
 def main():
-    """ Main method """
+    """ run when this script is executed """
     window = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     window.setup()
     arcade.run()
+
+    # ian's jank window transparency fix. can be removed in actual releases, sorry lads
+    try:
+        os.system(f"xprop -name \"{SCREEN_TITLE}\" -format _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY $(printf 0x%x $((0xffffffff)))")
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":
