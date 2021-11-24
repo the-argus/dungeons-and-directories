@@ -1,5 +1,6 @@
 import arcade
 import os
+import GameObjects as GO
 
 from constants.screen import (  SCREEN_WIDTH,
                                 SCREEN_HEIGHT,
@@ -12,6 +13,8 @@ class GameWindow(arcade.Window):
         super().__init__(width, height, title)
         arcade.set_background_color(arcade.color.BLACK)
 
+        self.global_sprite_list = None
+
     def setup(self):
         """ Set up the game and initialize the variables. """
 
@@ -21,9 +24,17 @@ class GameWindow(arcade.Window):
                     "S": False,
                     "D": False
                     }
+        
+        self.global_sprite_list = arcade.SpriteList()
+        
+        # example of constructing a game object
+        self.player = GO.Player()
+
+        self.global_sprite_list.append(self.player)
 
     def on_draw(self):
         arcade.start_render()
+        self.global_sprite_list.draw()
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.W:
@@ -71,7 +82,7 @@ class GameWindow(arcade.Window):
             self.keys["D"] = False
 
     def on_update(self, delta_time):
-        pass
+        self.global_sprite_list.update()
 
 
 def main():
