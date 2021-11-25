@@ -28,12 +28,14 @@ class GameWindow(arcade.Window):
         self.global_sprite_list = arcade.SpriteList()
         
         # example of constructing a game object
-        self.player = GO.Player()
+        self.physics_engine = arcade.PymunkPhysicsEngine()
+        self.player = GO.Player(self.physics_engine)
 
         self.global_sprite_list.append(self.player)
 
     def on_draw(self):
         arcade.start_render()
+        self.physics_engine.resync_sprites()
         self.global_sprite_list.draw()
 
     def on_key_press(self, key, modifiers):
@@ -83,6 +85,7 @@ class GameWindow(arcade.Window):
 
     def on_update(self, delta_time):
         self.player.control(self.keys, delta_time)
+        self.physics_engine.step(delta_time)
         self.global_sprite_list.update()
 
 

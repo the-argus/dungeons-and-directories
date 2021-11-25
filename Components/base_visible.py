@@ -15,4 +15,4 @@ class BaseVisible(Base):
         if isinstance(value, arcade.Sprite) or value is None:
             self._parent = value
         else:
-            raise ValueError("PlayerControl can only be assigned to an instance of an arcade sprite.")
+            raise ValueError(f"{self.__class__.__name__} Component can only be assigned to an instance of an arcade sprite.")
