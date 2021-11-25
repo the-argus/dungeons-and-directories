@@ -43,6 +43,8 @@ class GameObject():
             # remove first component of name "component"
             try:
                 self._components[component.name].pop(index)
+                if self._components[component.name] == []:
+                    self._components.pop(component.name)
             except ValueError:
                 raise ValueError(f"GameObject {self} does not have any components under name {component}.")
             except IndexError:
@@ -51,6 +53,8 @@ class GameObject():
             # remove the specific component passed in
             try:
                 self._components[component.name].remove(component)
+                if self._components[component.name] == []:
+                    self._components.pop(component.name)
             except ValueError:
                 # NOTE: valueerror could come from either the _components dict lookup OR remove, depend on where it doesnt exist.
                 raise ValueError(f"Specific Component {component} not found in GameObject {self}.")
@@ -60,9 +64,16 @@ class GameObject():
     def Component(self, component : str, index=0):
         """Retrieve component from this game object by name and, optionally, index."""
         try:
-            return self._components[component.name][index]
-        except ValueError:
-            raise ValueError(f"GameObject {self} does not have any components of type {component}")
+            if isinstance(component, str):
+                return self._components[component][index]
+            elif isinstance(component, Components.Base):
+                return self._components[component.name][index]
+            else:
+                # failstate, maybe component is the component type and not an instance?
+                return self._components[component.__name__][index]
+        except KeyError:
+            # raise ValueError(f"GameObject {self} does not have any components of type {component}")
+            return None
         except IndexError:
             raise IndexError(f"Index {index} is out of range of GameObject {self}'s list of {component} components.")
 

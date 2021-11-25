@@ -82,6 +82,7 @@ class GameWindow(arcade.Window):
             self.keys["D"] = False
 
     def on_update(self, delta_time):
+        self.player.control(self.keys, delta_time)
         self.global_sprite_list.update()
 
 
