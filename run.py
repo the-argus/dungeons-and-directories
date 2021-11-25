@@ -1,5 +1,6 @@
 import arcade
 import os
+import pymunk
 import GameObjects as GO
 
 from constants.screen import (  SCREEN_WIDTH,
@@ -31,6 +32,8 @@ class GameWindow(arcade.Window):
         self.physics_engine = arcade.PymunkPhysicsEngine()
         self.player = GO.Player(self.physics_engine)
 
+        temp_room_setup(self.physics_engine)
+
         self.global_sprite_list.append(self.player)
 
     def on_draw(self):
@@ -51,7 +54,7 @@ class GameWindow(arcade.Window):
             # toggle fullscreen
             self.set_fullscreen(not self.fullscreen)
 
-            # modify viewport to match fullscreen
+            # modify viewport to match fullscreen resolution
             width, height = self.get_size()
             if self.fullscreen:
                 if SCREEN_WIDTH > SCREEN_HEIGHT:
@@ -100,6 +103,23 @@ def main():
         os.system(f"xprop -name \"{SCREEN_TITLE}\" -format _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY $(printf 0x%x $((0xffffffff)))")
     except Exception:
         pass
+
+def temp_room_setup(physics_engine):
+    body = [None for i in range(4)]
+    shape = [None for i in range(4)]
+    # ljdvnsmflkgefmws lngemfskmgksfdmklm
+    body[0] = pymunk.Body(body_type=pymunk.Body.STATIC)
+    shape[0] = pymunk.Segment(body[0], (0, 0), (0, SCREEN_HEIGHT), 0.1)
+    body[1] = pymunk.Body(body_type=pymunk.Body.STATIC)
+    shape[1] = pymunk.Segment(body[1], (0, SCREEN_HEIGHT), (SCREEN_WIDTH, SCREEN_HEIGHT), 0.1)
+    body[2] = pymunk.Body(body_type=pymunk.Body.STATIC)
+    shape[2] = pymunk.Segment(body[2], (SCREEN_WIDTH, SCREEN_HEIGHT), (SCREEN_WIDTH, 0), 0.1)
+    body[3] = pymunk.Body(body_type=pymunk.Body.STATIC)
+    shape[3] = pymunk.Segment(body[3], (SCREEN_WIDTH, 0), (0, 0), 0.1)
+
+    for i in range(4):
+        shape[i].friction = 10
+        physics_engine.space.add(body[i], shape[i])
 
 
 if __name__ == "__main__":
