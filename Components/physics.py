@@ -49,7 +49,7 @@ class Physics(BaseVisible):
         if is_as or value is None:
             self._parent = value
             if is_as:
-                self.engine.add_sprite(value, *self._physics_args_container)
+                self.engine.add_sprite(value, **self._physics_args_container)
         else:
             raise ValueError(f"{self.__class__.__name__} Component can only be assigned to an instance of an arcade sprite.")
     

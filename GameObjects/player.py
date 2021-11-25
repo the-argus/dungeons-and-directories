@@ -11,6 +11,6 @@ def Player(physics_engine):
     p = GameObjectVisible(filename=sprite, center_x=start_x, center_y=start_y)
 
     p.add_component(C.PlayerControl())
-    p.add_component(C.Physics(physics_engine, mass=None, friction=None, moment_of_inertia=None))
+    p.add_component(C.Physics(physics_engine, mass=MASS, friction=FRICTION, moment_of_inertia=INERTIA))
 
     return p

@@ -7,6 +7,9 @@ from constants.screen import (  SCREEN_WIDTH,
                                 SCREEN_HEIGHT,
                                 SCREEN_TITLE
 )
+from constants.physics import ( WALL_FRICTION,
+                                GLOBAL_DAMPING
+)
 
 
 class GameWindow(arcade.Window):
@@ -29,7 +32,7 @@ class GameWindow(arcade.Window):
         self.global_sprite_list = arcade.SpriteList()
         
         # example of constructing a game object
-        self.physics_engine = arcade.PymunkPhysicsEngine()
+        self.physics_engine = arcade.PymunkPhysicsEngine(damping=GLOBAL_DAMPING)
         self.player = GO.Player(self.physics_engine)
 
         temp_room_setup(self.physics_engine)
@@ -118,7 +121,7 @@ def temp_room_setup(physics_engine):
     shape[3] = pymunk.Segment(body[3], (SCREEN_WIDTH, 0), (0, 0), 0.1)
 
     for i in range(4):
-        shape[i].friction = 10
+        shape[i].friction = 0.1
         physics_engine.space.add(body[i], shape[i])
 
 
