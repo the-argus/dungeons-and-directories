@@ -4,9 +4,12 @@ from constants.physics import MOMENT_INF
 
 SIMPLE_MOVE_SPEED = 200
 
-MASS = 0.01
+MASS = 1e-2
 
-MOVE_FORCE = MASS * 10
+MOVE_FORCE = MASS * 1e3
 
 FRICTION = 0.2
 INERTIA = MOMENT_INF
+# disabled
+DAMPING = None
+MAX_VELOCITY = None

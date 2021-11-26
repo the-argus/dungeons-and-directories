@@ -2,6 +2,12 @@ from math import atan2, cos, sin
 from .base_visible import BaseVisible
 from .physics import Physics
 from constants.player import SIMPLE_MOVE_SPEED, MOVE_FORCE
+from constants.controls import (FORWARD,
+                                BACK,
+                                LEFT,
+                                RIGHT,
+                                FULLSCREEN
+)
 
 class PlayerControl(BaseVisible):
     def __init__(self):
@@ -13,8 +19,8 @@ class PlayerControl(BaseVisible):
         if not p:
             return
         
-        yin = keys["W"] - keys["S"]
-        xin = keys["D"] - keys["A"]
+        yin = keys.control_is_pressed(FORWARD) - keys.control_is_pressed(BACK)
+        xin = keys.control_is_pressed(RIGHT) - keys.control_is_pressed(LEFT)
         theta = atan2(yin, xin)
 
         # do simple collision-less movement if there is no physics component
@@ -23,6 +29,6 @@ class PlayerControl(BaseVisible):
             p.center_y += SIMPLE_MOVE_SPEED * yin * abs(sin(theta)) * delta_time
         else:
             # actual physics using arcade pymunk physics engine
-            xi = MOVE_FORCE * xin * abs(cos(theta)) * delta_time
-            yi = MOVE_FORCE * yin * abs(sin(theta)) * delta_time
+            xi = ( MOVE_FORCE * xin * abs(cos(theta)) * delta_time )
+            yi = ( MOVE_FORCE * yin * abs(sin(theta)) * delta_time )
             p.apply_impulse((xi, yi))

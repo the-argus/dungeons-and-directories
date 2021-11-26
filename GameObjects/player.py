@@ -1,7 +1,7 @@
 from .base import GameObjectVisible
 import Components as C
 from constants.screen import SCREEN_HEIGHT, SCREEN_WIDTH
-from constants.player import MASS, FRICTION, INERTIA
+from constants.player import MASS, FRICTION, INERTIA, DAMPING, MAX_VELOCITY
 
 def Player(physics_engine):
     """ main character, should only be instantiated once. """
@@ -11,6 +11,12 @@ def Player(physics_engine):
     p = GameObjectVisible(filename=sprite, center_x=start_x, center_y=start_y)
 
     p.add_component(C.PlayerControl())
-    p.add_component(C.Physics(physics_engine, mass=MASS, friction=FRICTION, moment_of_inertia=INERTIA))
+    p.add_component(C.Physics(  physics_engine,
+                                mass=MASS,
+                                friction=FRICTION,
+                                moment_of_inertia=INERTIA,
+                                damping=DAMPING,
+                                max_velocity=MAX_VELOCITY
+                            ))
 
     return p

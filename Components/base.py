@@ -5,3 +5,7 @@ class Base():
         self.name = self.__class__.__name__
         # gameobject component is attached to
         self.parent = None
+    
+    def cleanup(self):
+        """Called whenever this component is removed from a GameObject"""
+        pass

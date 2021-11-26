@@ -42,8 +42,10 @@ class GameObject():
         if isinstance(component, str):
             # remove first component of name "component"
             try:
-                self._components[component.name].pop(index)
-                if self._components[component.name] == []:
+                clist = self._components[component.name]
+                clist[index].cleanup
+                clist.pop(index)
+                if clist == []:
                     self._components.pop(component.name)
             except ValueError:
                 raise ValueError(f"GameObject {self} does not have any components under name {component}.")
@@ -52,8 +54,10 @@ class GameObject():
         elif isinstance(component, Components.Base):
             # remove the specific component passed in
             try:
-                self._components[component.name].remove(component)
-                if self._components[component.name] == []:
+                clist = self._components[component.name]
+                clist.remove(component)
+                component.cleanup()
+                if clist == []:
                     self._components.pop(component.name)
             except ValueError:
                 # NOTE: valueerror could come from either the _components dict lookup OR remove, depend on where it doesnt exist.
