@@ -83,3 +83,7 @@ class GameEngine(arcade.Window):
         self.player.control(self.keys, delta_time)
         self.physics_engine.step(delta_time)
         self.global_sprite_list.update()
+    
+    def create_object(self, creation_func):
+        """Use creation function and its flags to handle the creation of a new object with all the necessary components"""
+        pass
