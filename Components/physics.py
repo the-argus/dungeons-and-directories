@@ -6,7 +6,7 @@ import arcade
 import pymunk
 
 class Physics(BaseVisible):
-    def __init__(   self, physics_engine : arcade.PymunkPhysicsEngine,
+    def __init__(   self, physics_engine : arcade.PymunkPhysicsEngine = None,
                     mass: float = None,
                     friction: float = None,
                     elasticity: Optional[float] = None,
@@ -30,7 +30,6 @@ class Physics(BaseVisible):
 
         # take the important arguments and store them for add_sprite later if we get a parent
         self._physics_args_container = locals()
-        self._physics_args_container.pop('physics_engine')
         templist = ["self"]
         for key, value in self._physics_args_container.items():
             if value is None or key[:2] == "__":
@@ -49,6 +48,7 @@ class Physics(BaseVisible):
         if is_as or value is None:
             self._parent = value
             if is_as:
+                self.engine = value.physics_engine
                 self.engine.add_sprite(value, **self._physics_args_container)
         else:
             raise ValueError(f"{self.__class__.__name__} Component can only be assigned to an instance of an arcade sprite.")

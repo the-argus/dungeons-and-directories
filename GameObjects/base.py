@@ -2,9 +2,12 @@ import arcade
 import Components
 
 class GameObject():
-    def __init__(self):
+    def __init__(self, engine):
         # components dict contains lists of instances of a given component tied to this object, 
         self._components = {}
+
+        # add references to things from the game engine which are needed for registering components. ATM just physics
+        self.physics_engine = engine.physics_engine
 
     def add_component(self, component : Components.Base, index=-1) -> int:
         """Append component to this object's list of components of the same type. Return index in list.
@@ -88,7 +91,9 @@ class GameObjectVisible(arcade.Sprite, GameObject):
     a game object.
     """
     def __init__(self, *args, **kwargs):
+        # remove engine from args for sprite and store it
+        engine = args[0]
         # combine sprite init
-        arcade.Sprite.__init__(self, *args, **kwargs)
+        arcade.Sprite.__init__(self, *args[1:], **kwargs)
         # with gameobject init
-        GameObject.__init__(self)
+        GameObject.__init__(self, engine)

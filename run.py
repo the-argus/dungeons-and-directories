@@ -5,6 +5,7 @@ from constants.screen import (  SCREEN_WIDTH,
                                 SCREEN_HEIGHT,
                                 SCREEN_TITLE
 )
+from GameObjects import Player
 
 def main():
     """ run when this script is executed """
@@ -13,6 +14,9 @@ def main():
 
     # add some walls
     temp_room_setup(engine.physics_engine)
+
+    # spawn the player
+    Player(engine)
 
     arcade.run()
 

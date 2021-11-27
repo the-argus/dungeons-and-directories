@@ -16,13 +16,11 @@ class GameEngine(arcade.Window):
     """
     Class meant to manage registering objects with the physics engine
     and calling flagged component functions on inputs, updates, and draws.
-
-    It should not contain any explicit loading or creating of objects, but
-    should be a tool for use in run.py's main function.
+    It should not contain any explicit loading or creating of objects.
     """
     def __init__(self, width, height, title):
-        super().__init__(width, height, title)
-        arcade.set_background_color(arcade.color.BLACK)
+        super().__init__(width, height, title, antialiasing=False)
+        self.background_color = arcade.color.BLACK
 
         self.global_sprite_list = None
 
@@ -38,9 +36,6 @@ class GameEngine(arcade.Window):
         self.physics_engine = arcade.PymunkPhysicsEngine(damping=GLOBAL_DAMPING)
 
         self.keys = KeyManager()
-        
-        self.player = GO.Player(self.physics_engine)
-        self.global_sprite_list.append(self.player)
 
     def on_draw(self):
         arcade.start_render()
@@ -84,6 +79,13 @@ class GameEngine(arcade.Window):
         self.physics_engine.step(delta_time)
         self.global_sprite_list.update()
     
-    def create_object(self, creation_func):
-        """Use creation function and its flags to handle the creation of a new object with all the necessary components"""
-        pass
+    def GameObject(self, *args, object_class = GO.GameObject, **kwargs):
+        """Create gameobject with reference to this engine."""
+        obj = object_class(self, *args, **kwargs)
+
+        # register with sprite list(s)
+        # TODO: add layers, each with a set of sprite lists for static and dynamic bodies
+        if isinstance(obj, arcade.Sprite):
+            self.global_sprite_list.append(obj)
+
+        return obj
