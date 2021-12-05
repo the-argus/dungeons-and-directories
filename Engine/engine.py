@@ -51,32 +51,6 @@ class GameEngine(arcade.Window):
     def on_key_press(self, key, modifiers):
         self.keys.on_key_press(key, modifiers)
 
-        if key == arcade.key.F and modifiers & arcade.key.MOD_CTRL:
-            # toggle fullscreen
-            self.set_fullscreen(not self.fullscreen)
-
-            # modify viewport to match fullscreen resolution
-            width, height = self.get_size()
-            if self.fullscreen:
-                if SCREEN_WIDTH > SCREEN_HEIGHT:
-                    aspect_ratio = height/width
-                    x1 = 0
-                    x2 = SCREEN_WIDTH
-                    y1 = 0
-                    y2 = int(SCREEN_WIDTH*aspect_ratio)
-                else:
-                    aspect_ratio = width/height
-                    x1 = 0
-                    x2 = int(SCREEN_HEIGHT*aspect_ratio)
-                    y1 = 0
-                    y2 = SCREEN_HEIGHT
-            else:
-                x1 = 0
-                x2 = SCREEN_WIDTH
-                y1 = 0
-                y2 = SCREEN_HEIGHT
-            self.set_viewport(x1, x2, y1, y2)
-
     def on_key_release(self, key, modifiers):
         self.keys.on_key_release(key, modifiers)
 
@@ -99,16 +73,14 @@ class GameEngine(arcade.Window):
     
     def register_handler(self, handler_func):
         # control event handlers, pass off to key manager
-        try:
-            for control in handler_func.__annotations__["on_control_pressed"]:
+        ocp = handler_func.__annotations__.get("on_control_pressed")
+        ocr = handler_func.__annotations__.get("on_control_released")
+        if ocp:
+            for control in ocp:
                 self.keys.add_control_press_handler(handler_func, control)
-        except KeyError:
-            pass
-        try:
-            for control in handler_func.__annotations__["on_control_released"]:
+        if ocr:
+            for control in ocr:
                 self.keys.add_control_release_handler(handler_func, control)
-        except KeyError:
-            pass
         
         if handler_func.__annotations__.get("on_draw"):
             self._on_draw_handlers.add(handler_func)

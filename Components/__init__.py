@@ -3,11 +3,13 @@ from .base import Base
 from .base_visible import BaseVisible
 from .physics import Physics
 from .playercontrol import PlayerControl
+from .fullscreen import Fullscreen
 
 __all__ = [
     "Base",
     "BaseVisible",
     "PlayerControl",
-    "Physics"
+    "Physics",
+    "Fullscreen"
 ]
 

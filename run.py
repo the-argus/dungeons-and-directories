@@ -5,12 +5,15 @@ from constants.screen import (  SCREEN_WIDTH,
                                 SCREEN_HEIGHT,
                                 SCREEN_TITLE
 )
-from GameObjects import Player
+from GameObjects import Player, Camera
 
 def main():
     """ run when this script is executed """
     engine = Engine(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     engine.setup()
+    
+    # init camera
+    Camera(engine)
 
     # add some walls
     temp_room_setup(engine.physics_engine)
