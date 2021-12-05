@@ -8,20 +8,23 @@ from constants.controls import (FORWARD,
                                 RIGHT,
                                 FULLSCREEN
 )
-from Engine.decorators import on_control_pressed
+from Engine.decorators import on_control_pressed, on_control_released, on_update
 
 class PlayerControl(BaseVisible):
     def __init__(self):
+        self.xin = 0
+        self.yin = 0
         super().__init__()
 
-    def control(self, key_manager, delta_time):
+    @on_update
+    def control(self, delta_time):
         p = self.parent
 
         if not p:
             return
         
-        yin = key_manager.control_is_pressed(FORWARD) - key_manager.control_is_pressed(BACK)
-        xin = key_manager.control_is_pressed(RIGHT) - key_manager.control_is_pressed(LEFT)
+        yin = self.yin
+        xin = self.xin
         theta = atan2(yin, xin)
 
         # do simple collision-less movement if there is no physics component
@@ -34,6 +37,8 @@ class PlayerControl(BaseVisible):
             yi = ( MOVE_FORCE * yin * abs(sin(theta)) * delta_time )
             p.apply_impulse((xi, yi))
 
-    @on_control_pressed([FORWARD, BACK, LEFT, RIGHT])
-    def move_control_pressed(self, control, key_manager):
-        print(f"control {control} pressed")
+    @on_control_pressed(FORWARD, BACK, LEFT, RIGHT)
+    @on_control_released(FORWARD, BACK, LEFT, RIGHT)
+    def move_control_updated(self, control, key_manager):
+        self.xin = key_manager.control_is_pressed(RIGHT) - key_manager.control_is_pressed(LEFT)
+        self.yin = key_manager.control_is_pressed(FORWARD) - key_manager.control_is_pressed(BACK)

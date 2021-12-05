@@ -35,9 +35,10 @@ RIGHT   =   {arcade.key.D : 0, arcade.key.RIGHT  : 0}
 FULLSCREEN = {arcade.key.F : arcade.key.MOD_CTRL}
 
 # make set of all possible keys
-ls = [eval(v) for v in dir() if v[:2] != "__" and v != 'arcade']
+_ls = [eval(v) for v in dir() if v[:2] != "__" and v != 'arcade']
 USED_KEYS = set()
+USED_CONTROLS = _ls
 
-for control in ls:
+for control in _ls:
     for key in control:
         USED_KEYS.add(key)

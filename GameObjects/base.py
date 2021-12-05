@@ -9,6 +9,8 @@ class GameObject():
         # add references to things from the game engine which are needed for registering components. ATM just physics
         self.physics_engine = engine.physics_engine
 
+        self.register_handler = engine.register_handler
+
     def add_component(self, component : Components.Base, index=-1) -> int:
         """Append component to this object's list of components of the same type. Return index in list.
         NOTE: using index could be really bad because you could fuck up any indices of other objects you may have stored.
@@ -34,8 +36,8 @@ class GameObject():
 
         for name, function in newfs.items():
             self.__dict__[name] = function
-            # TODO: google how to use logging lol
-            # print(f"Added function {name} to {self}.")
+            # register handler functions with the engine
+            self.register_handler(function)
 
         return placement
     

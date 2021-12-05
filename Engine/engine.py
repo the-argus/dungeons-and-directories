@@ -28,6 +28,10 @@ class GameEngine(arcade.Window):
 
         self.keys = None
 
+        self._on_update_handlers = set()
+
+        self._on_draw_handlers = set()
+
     def setup(self):
         """ Set up the game and initialize the variables. """
         
@@ -41,6 +45,8 @@ class GameEngine(arcade.Window):
         arcade.start_render()
         self.physics_engine.resync_sprites()
         self.global_sprite_list.draw()
+        for handler in self._on_draw_handlers:
+            handler()
 
     def on_key_press(self, key, modifiers):
         self.keys.on_key_press(key, modifiers)
@@ -75,7 +81,8 @@ class GameEngine(arcade.Window):
         self.keys.on_key_release(key, modifiers)
 
     def on_update(self, delta_time):
-        self.player.control(self.keys, delta_time)
+        for handler in self._on_update_handlers:
+            handler(delta_time)
         self.physics_engine.step(delta_time)
         self.global_sprite_list.update()
     
@@ -89,3 +96,22 @@ class GameEngine(arcade.Window):
             self.global_sprite_list.append(obj)
 
         return obj
+    
+    def register_handler(self, handler_func):
+        # control event handlers, pass off to key manager
+        try:
+            for control in handler_func.__annotations__["on_control_pressed"]:
+                self.keys.add_control_press_handler(handler_func, control)
+        except KeyError:
+            pass
+        try:
+            for control in handler_func.__annotations__["on_control_released"]:
+                self.keys.add_control_release_handler(handler_func, control)
+        except KeyError:
+            pass
+        
+        if handler_func.__annotations__.get("on_draw"):
+            self._on_draw_handlers.add(handler_func)
+        
+        if handler_func.__annotations__.get("on_update"):
+            self._on_update_handlers.add(handler_func)
