@@ -55,9 +55,15 @@ class Physics(BaseVisible):
     
     def apply_impulse(self, impulse: Tuple[float, float]):
         self.engine.apply_impulse(self.parent, impulse)
+    
+    def apply_force(self, force: Tuple[float, float]):
+        self.engine.apply_force(self.parent, force)
 
     def set_velocity(self, velocity: Tuple[float, float]):
         self.engine.set_velocity(self.parent, velocity)
 
     def set_position(self, position: Union[pymunk.Vec2d, Tuple[float, float]]):
         self.engine.set_position(self.parent, position)
+    
+    def get_velocity(self):
+        return self.engine.get_physics_object(self.parent).body.velocity

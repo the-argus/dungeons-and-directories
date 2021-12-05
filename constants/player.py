@@ -10,6 +10,9 @@ MOVE_FORCE = MASS * 1e3
 
 FRICTION = 0.2
 INERTIA = MOMENT_INF
-# disabled
-DAMPING = None
-MAX_VELOCITY = None
+
+DAMPING = 0.1
+MAX_VELOCITY = 300
+
+# percentage reduction of speed whenever releasing a control
+STOPPING_FORCE = 0.1
