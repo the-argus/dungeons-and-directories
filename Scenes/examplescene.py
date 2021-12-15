@@ -1,14 +1,14 @@
 import pymunk
 from constants.screen import SCREEN_HEIGHT, SCREEN_WIDTH
 from Engine import Scene
-from GameObjects import Camera, Player
+from GameObjects import load_object
 
-def examplescene():
+def examplescene(engine):
     scene = Scene()
 
     # add objects
-    scene.add_object(Camera)
-    scene.add_object(Player)
+    scene.add_object(load_object("GameObjects/camera.json", engine))
+    scene.add_object(load_object("GameObjects/player.json", engine))
 
     # add walls
     body = [None for i in range(4)]

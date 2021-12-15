@@ -1,0 +1,11 @@
+{
+    "Object": { },
+    "ComponentList": [
+        {
+            "name": "Fullscreen",
+            "args": [
+                "ENGINE"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "Object": {
+        "kwargs": {
+            "object_class": "GameObjectVisible",
+            "filename": "./resources/square.png",
+            "center_x": 240,
+            "center_y": 135
+        }
+    },
+    "ComponentList": [
+        {
+            "name": "PlayerControl"
+        },
+        {
+            "name": "Physics",
+            "kwargs": {
+                "mass": 0.01,
+                "friction": 0.2,
+                "moment_of_inertia": "INFINITY",
+                "damping": 0.001,
+                "max_velocity": "None"
+            }
+        }
+    ]
+}

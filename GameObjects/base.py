@@ -1,4 +1,5 @@
 import arcade
+import json
 import Components
 
 class GameObject():
@@ -113,3 +114,43 @@ class GameObjectSimpleVisible(arcade.Texture, GameObject):
             arcade.Texture.__init__(self, *args[1:], hit_box_algorithm=None, **kwargs)
         # with gameobject init
         GameObject.__init__(self, engine)
+
+def load_object(path, engine):
+    """load an object from json data"""
+    with open(path) as f:
+        data = json.load(f)
+
+    object_args = data["Object"].get("args", [])
+    object_kwargs = data["Object"].get("kwargs", {})
+
+    obj = engine.GameObject(*object_args, **object_kwargs)
+
+    # add components
+    clist = data["ComponentList"]
+    for cdata in clist:
+        name = cdata["name"]
+        cclass = eval(f"Components.{name}")
+        args = cdata.get("args",[])
+        kwargs = cdata.get("kwargs", {})
+        # add objects for certain string placeholders
+        for index, ph in enumerate(args):
+            if ph == "None":
+                args[index] = None
+            elif ph == "INFINITY":
+                args[index] = float('inf')
+            elif ph == "ENGINE":
+                args[index] = engine
+        
+        # same for kwargs
+        for kw, val in kwargs.items():
+            if val == "None":
+                kwargs[kw] = None
+            elif val == "INFINITY":
+                kwargs[kw] = float('inf')
+            elif val == "ENGINE":
+                kwargs[kw] = engine
+        
+        c = cclass(*args, **kwargs)
+        obj.add_component(c)
+    
+    return obj

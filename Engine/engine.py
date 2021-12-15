@@ -63,7 +63,11 @@ class GameEngine(arcade.Window):
     
     def GameObject(self, *args, object_class = GO.GameObject, **kwargs):
         """Create gameobject with reference to this engine."""
-        obj = object_class(self, *args, **kwargs)
+        if isinstance(object_class, str):
+            cl = eval(f"GO.{object_class}")
+            obj = cl(self, *args, **kwargs)
+        else:
+            obj = object_class(self, *args, **kwargs)
 
         # register with sprite list(s)
         # TODO: add layers, each with a set of sprite lists for static and dynamic bodies
@@ -90,12 +94,15 @@ class GameEngine(arcade.Window):
             self._on_update_handlers.add(handler_func)
     
     def load(self, scene_init):
-        scene = scene_init()
+        scene = scene_init(self)
         
         # add physics bodies
         for body, shape in scene.physics_objects:
             self.physics_engine.space.add(body, shape)
         
         # create objects
-        for object in scene.objects:
-            object(self)
+        for obj in scene.objects:
+            if isinstance(obj, GO.GameObject):
+                # game object is already instantiated and not a function
+                continue
+            obj(self)
