@@ -88,14 +88,28 @@ class GameObject():
 
 class GameObjectVisible(arcade.Sprite, GameObject):
     """
-    Multiple inheiritance passthrough class thing.
-    Probably should just be replaced by not drawing
-    a game object.
+    Gameobject with added functionality of an arcade sprite
     """
     def __init__(self, *args, **kwargs):
         # remove engine from args for sprite and store it
         engine = args[0]
         # combine sprite init
         arcade.Sprite.__init__(self, *args[1:], **kwargs)
+        # with gameobject init
+        GameObject.__init__(self, engine)
+
+class GameObjectSimpleVisible(arcade.Texture, GameObject):
+    """
+    Gameobject with added functionality of an arcade texture
+    """
+    def __init__(self, *args, **kwargs):
+        # remove engine from args for sprite and store it
+        engine = args[0]
+        # combine texture init
+        if kwargs.get("hit_box_algorithm"):
+            # make default hit box algorithm value be "None" instead of simple
+            arcade.Texture.__init__(self, *args[1:], **kwargs)
+        else:
+            arcade.Texture.__init__(self, *args[1:], hit_box_algorithm=None, **kwargs)
         # with gameobject init
         GameObject.__init__(self, engine)

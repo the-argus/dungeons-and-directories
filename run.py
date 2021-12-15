@@ -18,6 +18,9 @@ def main():
     # add some walls
     temp_room_setup(engine.physics_engine)
 
+    # add floor textures
+    temp_floor_textures(engine)
+
     # spawn the player
     Player(engine)
 
@@ -46,6 +49,10 @@ def temp_room_setup(physics_engine):
     for i in range(4):
         shape[i].friction = 0.1
         physics_engine.space.add(body[i], shape[i])
+
+def temp_floor_textures(engine):
+    # initialize floor texture and arcade textures
+    floor_tex = arcade.load_texture("resources/raw/cobble.png")
 
 
 if __name__ == "__main__":

@@ -1,8 +1,10 @@
 import arcade
 import os
 import pymunk
+import json
 import GameObjects as GO
 from .key_manager import KeyManager
+from .scene import Scene
 
 from constants.screen import (  SCREEN_WIDTH,
                                 SCREEN_HEIGHT,
@@ -87,3 +89,10 @@ class GameEngine(arcade.Window):
         
         if handler_func.__annotations__.get("on_update"):
             self._on_update_handlers.add(handler_func)
+    
+    def load(self, path_or_scene: Scene):
+        # deserialize the json room
+        if isinstance(path_or_scene, str):
+            scene = json.loads(path_or_scene)
+        else:
+            scene = path_or_scene
