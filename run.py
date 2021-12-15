@@ -6,7 +6,7 @@ from constants.screen import (  SCREEN_WIDTH,
                                 SCREEN_TITLE
 )
 from GameObjects import Player, Camera
-from Scenes.examplescene import examplescene
+from Scenes import examplescene
 
 def main():
     """ run when this script is executed """
@@ -15,14 +15,7 @@ def main():
     
     engine.load(examplescene)
 
-    # add floor textures
-    temp_floor_textures(engine)
-
     arcade.run()
-
-def temp_floor_textures(engine):
-    # initialize floor texture and arcade textures
-    floor_tex = arcade.load_texture("resources/raw/cobble.png")
 
 
 if __name__ == "__main__":
