@@ -1,11 +1,6 @@
 import arcade
-import pymunk
 from Engine import GameEngine as Engine
-from constants.screen import (  SCREEN_WIDTH,
-                                SCREEN_HEIGHT,
-                                SCREEN_TITLE
-)
-from GameObjects import Player, Camera
+from constants.screen import (  SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE )
 from Scenes import examplescene
 
 def main():
