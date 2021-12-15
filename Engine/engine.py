@@ -1,7 +1,6 @@
 import arcade
 import os
 import pymunk
-import json
 import GameObjects as GO
 from .key_manager import KeyManager
 from .scene import Scene
@@ -90,9 +89,13 @@ class GameEngine(arcade.Window):
         if handler_func.__annotations__.get("on_update"):
             self._on_update_handlers.add(handler_func)
     
-    def load(self, path_or_scene: Scene):
-        # deserialize the json room
-        if isinstance(path_or_scene, str):
-            scene = json.loads(path_or_scene)
-        else:
-            scene = path_or_scene
+    def load(self, scene_init):
+        scene = scene_init()
+        
+        # add physics bodies
+        for body, shape in scene.physics_objects:
+            self.physics_engine.space.add(body, shape)
+        
+        # create objects
+        for object in scene.objects:
+            object(self)
