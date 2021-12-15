@@ -20,13 +20,6 @@ def main():
 
     arcade.run()
 
-
-    # ian's jank window transparency fix. can be removed in actual releases, sorry lads
-    try:
-        os.system(f"xprop -name \"{SCREEN_TITLE}\" -format _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY $(printf 0x%x $((0xffffffff)))")
-    except Exception:
-        pass
-
 def temp_floor_textures(engine):
     # initialize floor texture and arcade textures
     floor_tex = arcade.load_texture("resources/raw/cobble.png")
