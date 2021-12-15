@@ -1,6 +1,7 @@
 import arcade
 import json
 import Components
+from utils import json_custom_keyword_parse
 
 class GameObject():
     def __init__(self, engine):
@@ -134,21 +135,13 @@ def load_object(path, engine):
         kwargs = cdata.get("kwargs", {})
         # add objects for certain string placeholders
         for index, ph in enumerate(args):
-            if ph == "None":
-                args[index] = None
-            elif ph == "INFINITY":
-                args[index] = float('inf')
-            elif ph == "ENGINE":
-                args[index] = engine
+            if isinstance(ph, str):
+                args[index] = json_custom_keyword_parse(ph, engine)
         
         # same for kwargs
         for kw, val in kwargs.items():
-            if val == "None":
-                kwargs[kw] = None
-            elif val == "INFINITY":
-                kwargs[kw] = float('inf')
-            elif val == "ENGINE":
-                kwargs[kw] = engine
+            if isinstance(val, str):
+                kwargs[kw] = json_custom_keyword_parse(val, engine)
         
         c = cclass(*args, **kwargs)
         obj.add_component(c)

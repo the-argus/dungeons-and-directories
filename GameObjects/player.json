@@ -14,7 +14,7 @@
         {
             "name": "Physics",
             "kwargs": {
-                "mass": 0.01,
+                "mass": "player:MASS",
                 "friction": 0.2,
                 "moment_of_inertia": "INFINITY",
                 "damping": 0.001,
