@@ -124,7 +124,21 @@ def load_object(path, engine):
     object_args = data["Object"].get("args", [])
     object_kwargs = data["Object"].get("kwargs", {})
 
-    obj = engine.GameObject(*object_args, **object_kwargs)
+    draw_kwargs = {}
+    try:
+        draw_kwargs["layer"] = data["Object"]["layer"]
+    except KeyError:
+        pass
+    try:
+        draw_kwargs["use_spatial_hash"] = data["Object"]["static"]
+    except KeyError:
+        pass
+    try:
+        draw_kwargs["spatial_hash_cell_size"] = data["Object"]["spatial_hash_cell_size"]
+    except KeyError:
+        pass
+
+    obj = engine.GameObject(*object_args, **draw_kwargs, **object_kwargs)
 
     # add components
     clist = data["ComponentList"]

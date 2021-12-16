@@ -1,5 +1,7 @@
 {
     "Object": {
+        "layer": 2,
+        "static": false,
         "kwargs": {
             "object_class": "GameObjectVisible",
             "filename": "./resources/square.png",

@@ -4,6 +4,7 @@ import pymunk
 import json
 import GameObjects as GO
 from .key_manager import KeyManager
+from .layer import Layer
 from utils import json_custom_keyword_parse
 
 from constants.screen import (  SCREEN_WIDTH,
@@ -20,11 +21,11 @@ class GameEngine(arcade.Window):
     and calling flagged component functions on inputs, updates, and draws.
     It should not contain any explicit loading or creating of objects.
     """
-    def __init__(self, width, height, title):
+    def __init__(self, width, height, title, layers=3):
         super().__init__(width, height, title, antialiasing=False)
         self.background_color = arcade.color.BLACK
 
-        self.global_sprite_list = None
+        self.layers = [Layer() for i in range(layers)]
 
         self.physics_engine = None
 
@@ -37,8 +38,6 @@ class GameEngine(arcade.Window):
     def setup(self):
         """ Set up the game and initialize the variables. """
         
-        self.global_sprite_list = arcade.SpriteList()
-        
         self.physics_engine = arcade.PymunkPhysicsEngine(damping=GLOBAL_DAMPING)
 
         self.keys = KeyManager()
@@ -46,7 +45,8 @@ class GameEngine(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         self.physics_engine.resync_sprites()
-        self.global_sprite_list.draw()
+        for layer in self.layers:
+            layer.draw()
         for handler in self._on_draw_handlers:
             handler()
 
@@ -59,10 +59,13 @@ class GameEngine(arcade.Window):
     def on_update(self, delta_time):
         for handler in self._on_update_handlers:
             handler(delta_time)
+        
         self.physics_engine.step(delta_time)
-        self.global_sprite_list.update()
+
+        for layer in self.layers:
+            layer.update()
     
-    def GameObject(self, *args, object_class = GO.GameObject, **kwargs):
+    def GameObject(self, *args, object_class=GO.GameObject, layer=0, use_spatial_hash=False, spatial_hash_cell_size=128, **kwargs):
         """Create gameobject with reference to this engine."""
         if isinstance(object_class, str):
             cl = eval(f"GO.{object_class}")
@@ -71,9 +74,10 @@ class GameEngine(arcade.Window):
             obj = object_class(self, *args, **kwargs)
 
         # register with sprite list(s)
-        # TODO: add layers, each with a set of sprite lists for static and dynamic bodies
-        if isinstance(obj, arcade.Sprite):
-            self.global_sprite_list.append(obj)
+        if layer is None:
+            layer = 0
+        if isinstance(obj, arcade.Sprite) or isinstance(obj, arcade.Texture):
+            self.layers[layer].add_sprite(obj, use_spatial_hash, spatial_hash_cell_size)
 
         return obj
     
