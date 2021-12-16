@@ -35,6 +35,8 @@ class GameEngine(arcade.Window):
 
         self._on_draw_handlers = set()
 
+        self.named_objects = {}
+
     def setup(self):
         """ Set up the game and initialize the variables. """
         
@@ -72,12 +74,22 @@ class GameEngine(arcade.Window):
             obj = cl(self, *args, **kwargs)
         else:
             obj = object_class(self, *args, **kwargs)
+        
+        n = kwargs.get("name")
+        if n is not None:
+            obj.name = n
 
         # register with sprite list(s)
         if layer is None:
             layer = 0
         if isinstance(obj, arcade.Sprite) or isinstance(obj, arcade.Texture):
             self.layers[layer].add_sprite(obj, use_spatial_hash, spatial_hash_cell_size)
+        
+        if obj.name is not None:
+            if self.named_objects.get(obj.name) is not None:
+                # name must be unique atm
+                raise ValueError(f"Multiple objects created with name \"{obj.name}\" have been created.")
+            self.named_objects[obj.name] = obj
 
         return obj
     

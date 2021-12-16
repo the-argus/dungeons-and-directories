@@ -4,12 +4,18 @@ from .base_visible import BaseVisible
 from .physics import Physics
 from .playercontrol import PlayerControl
 from .fullscreen import Fullscreen
+from .lerpclampmove import CameraLerpClampMove
+from .camera_base import CameraBase
+from .camera_follow import CameraFollow
 
 __all__ = [
     "Base",
     "BaseVisible",
     "PlayerControl",
     "Physics",
-    "Fullscreen"
+    "Fullscreen",
+    "CameraBase",
+    "CameraLerpClampMove",
+    "CameraFollow"
 ]
 

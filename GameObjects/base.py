@@ -4,9 +4,11 @@ import Components
 from utils import json_custom_keyword_parse
 
 class GameObject():
-    def __init__(self, engine):
+    def __init__(self, engine, name=None):
         # components dict contains lists of instances of a given component tied to this object, 
         self._components = {}
+
+        self.name = name
 
         # add references to things from the game engine which are needed for registering components. ATM just physics
         self.physics_engine = engine.physics_engine
@@ -95,6 +97,7 @@ class GameObjectVisible(arcade.Sprite, GameObject):
     def __init__(self, *args, **kwargs):
         # remove engine from args for sprite and store it
         engine = args[0]
+        self.name = kwargs.pop("name")
         # combine sprite init
         arcade.Sprite.__init__(self, *args[1:], **kwargs)
         # with gameobject init
@@ -107,6 +110,7 @@ class GameObjectSimpleVisible(arcade.Texture, GameObject):
     def __init__(self, *args, **kwargs):
         # remove engine from args for sprite and store it
         engine = args[0]
+        self.name = kwargs.pop("name")
         # combine texture init
         if kwargs.get("hit_box_algorithm"):
             # make default hit box algorithm value be "None" instead of simple

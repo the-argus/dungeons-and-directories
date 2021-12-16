@@ -1,5 +1,11 @@
 import pymunk
 
+def lerp(x1, x2, lerp_amount):
+    return x1 + ( ( x2 - x1 ) * x )
+
+def clamp(value, range):
+    return max(min(value, range[1]), range[0])
+
 def json_custom_keyword_parse(json_value, engine):
     """
     accept a string from a json object and convert it to

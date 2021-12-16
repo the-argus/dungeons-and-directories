@@ -3,6 +3,7 @@
         "layer": 2,
         "static": false,
         "kwargs": {
+            "name": "player",
             "object_class": "GameObjectVisible",
             "filename": "./resources/square.png",
             "center_x": 240,

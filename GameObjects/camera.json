@@ -2,10 +2,13 @@
     "Object": { },
     "ComponentList": [
         {
-            "name": "Fullscreen",
+            "name": "CameraBase",
             "args": [
                 "ENGINE"
             ]
+        },
+        {
+            "name": "Fullscreen"
         }
     ]
 }

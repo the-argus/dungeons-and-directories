@@ -1,0 +1,29 @@
+{
+    "Object": { },
+    "ComponentList": [
+        {
+            "name": "CameraBase",
+            "args": [
+                "ENGINE"
+            ]
+        },
+        {
+            "name": "Fullscreen"
+        },
+        {
+            "name": "CameraLerpClampMove",
+            "kwargs": {
+                "lerpspeed" : "0.5",
+                "x_clamp" : [0, "level.levelone:WIDTH"],
+                "y_clamp" : [0, "level.levelone:HEIGHT"]
+            }
+        },
+        {
+            "name": "CameraFollow",
+            "args": [
+                "ENGINE",
+                "player"
+            ]
+        }
+    ]
+}

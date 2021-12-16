@@ -1,0 +1,50 @@
+{
+    "Objects": [
+        "player",
+        "advanced_camera"
+    ],
+    "PhysicsObjects": {
+        "shapes": [
+            {
+                "type": "Segment",
+                "kwargs": {
+                    "body" : "NEW_PYMUNK_STATIC_BODY",
+                    "a" : [ 0, 0 ],
+                    "b" : [ 0, "level.levelone:HEIGHT" ],
+                    "radius" : 0.1
+                },
+                "friction" : 0.1
+            },
+            {
+                "type": "Segment",
+                "kwargs": {
+                    "body" : "NEW_PYMUNK_STATIC_BODY",
+                    "a" : [ 0, "level.levelone:HEIGHT" ],
+                    "b" : [ "level.levelone:WIDTH", "level.levelone:HEIGHT" ],
+                    "radius" : 0.1
+                },
+                "friction" : 0.1
+            },
+            {
+                "type": "Segment",
+                "kwargs": {
+                    "body" : "NEW_PYMUNK_STATIC_BODY",
+                    "a" : [ "level.levelone:WIDTH", "level.levelone:HEIGHT" ],
+                    "b" : [ "level.levelone:WIDTH", 0 ],
+                    "radius" : 0.1
+                },
+                "friction" : 0.1
+            },
+            {
+                "type": "Segment",
+                "kwargs": {
+                    "body" : "NEW_PYMUNK_STATIC_BODY",
+                    "a" : [ "level.levelone:WIDTH", 0 ],
+                    "b" : [ 0, 0 ],
+                    "radius" : 0.1
+                },
+                "friction" : 0.1
+            }
+        ]
+    }
+}
