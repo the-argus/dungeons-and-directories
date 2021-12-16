@@ -118,7 +118,7 @@ class GameObjectSimpleVisible(arcade.Texture, GameObject):
 
 def load_object(path, engine):
     """load an object from json data"""
-    with open(path) as f:
+    with open(f"GameObjects/{path}.json", "r") as f:
         data = json.load(f)
 
     object_args = data["Object"].get("args", [])

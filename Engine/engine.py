@@ -1,9 +1,10 @@
 import arcade
 import os
 import pymunk
+import json
 import GameObjects as GO
 from .key_manager import KeyManager
-from .scene import Scene
+from utils import json_custom_keyword_parse
 
 from constants.screen import (  SCREEN_WIDTH,
                                 SCREEN_HEIGHT,
@@ -93,16 +94,32 @@ class GameEngine(arcade.Window):
         if handler_func.__annotations__.get("on_update"):
             self._on_update_handlers.add(handler_func)
     
-    def load(self, scene_init):
-        scene = scene_init(self)
+    def load(self, scene_path):
+        """load a json scene into the game state"""
         
-        # add physics bodies
-        for body, shape in scene.physics_objects:
+        with open(f"Scenes/{scene_path}.json", "r") as s:
+            data = json_custom_keyword_parse(json.load(s), self)
+        
+        # load the game objects
+        for obj_name in data.get("Objects",[]):
+            GO.load_object(obj_name, self)
+        
+        bodies = []
+        for obj in data.get("PhysicsObjects", {}).get("bodies", []):
+            kwargs = obj.get("kwargs", {})
+            body = pymunk.Body(**kwargs)
+            bodies.append(body)
+        
+        for obj in data.get("PhysicsObjects", {}).get("shapes", []):
+            # convert the body index to an actual reference if necessary
+            body = obj["kwargs"]["body"]
+            if isinstance(body, int):
+                obj["kwargs"]["body"] = bodies[body]
+                body = bodies[body]
+
+            # create the shapes and bodies
+            type = obj["type"]
+            pymunk_class = eval(f"pymunk.{type}")
+            shape = pymunk_class(**obj["kwargs"])
+
             self.physics_engine.space.add(body, shape)
-        
-        # create objects
-        for obj in scene.objects:
-            if isinstance(obj, GO.GameObject):
-                # game object is already instantiated and not a function
-                continue
-            obj(self)

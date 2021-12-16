@@ -3,7 +3,55 @@
         "camera",
         "player"
     ],
-    "PhysicsObjects": [
-        
-    ]
+    "PhysicsObjects": {
+        "bodies": [
+            {
+                "kwargs": {
+                    "body_type": "PYMUNK_STATIC"
+                }
+            }
+        ],
+        "shapes": [
+            {
+                "type": "Segment",
+                "kwargs": {
+                    "body" : "NEW_PYMUNK_STATIC_BODY",
+                    "a" : [ 0, 0 ],
+                    "b" : [ 0, "screen:SCREEN_HEIGHT" ],
+                    "radius" : 0.1
+                },
+                "friction" : 0.1
+            },
+            {
+                "type": "Segment",
+                "kwargs": {
+                    "body" : "NEW_PYMUNK_STATIC_BODY",
+                    "a" : [ 0, "screen:SCREEN_HEIGHT" ],
+                    "b" : [ "screen:SCREEN_WIDTH", "screen:SCREEN_HEIGHT" ],
+                    "radius" : 0.1
+                },
+                "friction" : 0.1
+            },
+            {
+                "type": "Segment",
+                "kwargs": {
+                    "body" : "NEW_PYMUNK_STATIC_BODY",
+                    "a" : [ "screen:SCREEN_WIDTH", "screen:SCREEN_HEIGHT" ],
+                    "b" : [ "screen:SCREEN_WIDTH", 0 ],
+                    "radius" : 0.1
+                },
+                "friction" : 0.1
+            },
+            {
+                "type": "Segment",
+                "kwargs": {
+                    "body" : "NEW_PYMUNK_STATIC_BODY",
+                    "a" : [ "screen:SCREEN_WIDTH", 0 ],
+                    "b" : [ 0, 0 ],
+                    "radius" : 0.1
+                },
+                "friction" : 0.1
+            }
+        ]
+    }
 }

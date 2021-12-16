@@ -18,7 +18,6 @@ class KeyManager:
         """called by engine"""
         # update current modifiers
         self.modifiers = modifiers
-
         # update key state
         if key in USED_KEYS:
             self.keys[key] = True
@@ -60,14 +59,14 @@ class KeyManager:
     def add_control_press_handler(self, function, control):
         """adds a function to the set of functions which are executed by the key manager whenever a control is pressed"""
         for key, modifiers in control.items():
-                tmp_control = {key:modifiers}
-                self._control_press_handlers[str(tmp_control)].add(function)
+            tmp_control = {key:modifiers}
+            self._control_press_handlers[str(tmp_control)].add(function)
     
     def add_control_release_handler(self, function, control):
         """adds a function to the set of functions which are executed by the key manager whenever a control is released"""
         for key, modifiers in control.items():
-                tmp_control = {key:modifiers}
-                self._control_release_handlers[str(tmp_control)].add(function)
+            tmp_control = {key:modifiers}
+            self._control_release_handlers[str(tmp_control)].add(function)
     
     # passthrough stuff for basic dict functionality
     def __getitem__(self, key):
