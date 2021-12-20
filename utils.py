@@ -1,9 +1,15 @@
 import pymunk
 
 def lerp(x1, x2, lerp_amount):
-    return x1 + ( ( x2 - x1 ) * x )
+    return x1 + ( ( x2 - x1 ) * x1 )
 
 def clamp(value, range):
+    if not (isinstance(value, (int, float))):
+        raise ValueError(f"Clamp not supported between type {type(value)} and {type(range[0])}")
+    if not len(range) == 2:
+        raise ValueError(f"range argument for clamp should be an iterable of length 2, got {len(range)}")
+    if not (isinstance(range[0], (int, float)) and isinstance(range[1], (int, float))):
+        raise ValueError(f"Clamp not supported between type {type(value)} and {type(range[0])} and {type(range[1])}")
     return max(min(value, range[1]), range[0])
 
 def json_custom_keyword_parse(json_value, engine):

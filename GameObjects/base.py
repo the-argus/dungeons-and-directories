@@ -123,7 +123,7 @@ class GameObjectSimpleVisible(arcade.Texture, GameObject):
 def load_object(path, engine):
     """load an object from json data"""
     with open(f"GameObjects/{path}.json", "r") as f:
-        data = json.load(f)
+        data = json_custom_keyword_parse(json.load(f), engine)
 
     object_args = data["Object"].get("args", [])
     object_kwargs = data["Object"].get("kwargs", {})
@@ -151,16 +151,7 @@ def load_object(path, engine):
         cclass = eval(f"Components.{name}")
         args = cdata.get("args",[])
         kwargs = cdata.get("kwargs", {})
-        # add objects for certain string placeholders
-        for index, ph in enumerate(args):
-            if isinstance(ph, str):
-                args[index] = json_custom_keyword_parse(ph, engine)
-        
-        # same for kwargs
-        for kw, val in kwargs.items():
-            if isinstance(val, str):
-                kwargs[kw] = json_custom_keyword_parse(val, engine)
-        
+
         c = cclass(*args, **kwargs)
         obj.add_component(c)
     

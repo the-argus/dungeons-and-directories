@@ -9,7 +9,7 @@ def dummy(*args, **kwargs):
 class CameraFollow(Base):
     def __init__(self, engine, follow_target):
         super().__init__()
-        self.follow = engine.named_objects[follow_target]
+        self.follow_target = engine.named_objects[follow_target]
         self.move = dummy
     
     def _attached(self):
@@ -17,4 +17,4 @@ class CameraFollow(Base):
     
     @on_update
     def follow(self, delta_time):
-        self.move(self.follow.center_x, self.follow.center_y)
+        self.move(self.follow_target.center_x, self.follow_target.center_y)
