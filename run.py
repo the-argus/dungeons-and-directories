@@ -7,7 +7,7 @@ def main():
     engine = Engine(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     engine.setup()
     
-    engine.load("levelone")
+    engine.load("examplescene")
 
     arcade.run()
 
